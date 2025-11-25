@@ -1,0 +1,39 @@
+version: "3.9"
+
+services:
+  catalog:
+    build:
+      context: ../catalog
+      dockerfile: Dockerfile
+    ports:
+      - "4000:4000"
+    volumes:
+      - ../catalog:/app   
+      
+  order:
+    build:
+      context: ../order
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    volumes:
+      - ../order:/app    
+    environment:
+      - CATALOG_URL=http://catalog:4000
+    depends_on:
+      - catalog
+
+  fronted:
+    build:
+      context: ../fronted  
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    volumes:
+      - ../fronted:/app    
+    environment:
+      - CATALOG_URL=http://catalog:4000
+      - ORDER_URL=http://order:5000
+    depends_on:
+      - catalog
+      - order
