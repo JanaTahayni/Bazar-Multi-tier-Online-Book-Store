@@ -1,39 +1,95 @@
 version: "3.9"
 
 services:
-  catalog:
+  # Frontend (NOT replicated)
+  fronted:
+    build:
+      context: ../fronted
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - PORT=3000
+      - CATALOG_REPLICAS=http://catalog1:4001,http://catalog2:4002
+      - ORDER_REPLICAS=http://order1:5001,http://order2:5002
+      - CACHE_ENABLED=true
+      - CACHE_MAX=30
+    depends_on:
+      - catalog1
+      - catalog2
+      - order1
+      - order2
+
+  # Catalog replicas
+  catalog1:
     build:
       context: ../catalog
       dockerfile: Dockerfile
     ports:
-      - "4000:4000"
+      - "4001:4001"
+    environment:
+      - PORT=4001
+      - DB_FILE=/data/catalog.json
+      - PEER_URL=http://catalog2:4002
+      - FRONTEND_URL=http://fronted:3000
     volumes:
-      - ../catalog:/app   
-      
-  order:
+      - catalog1_data:/data
+
+  catalog2:
+    build:
+      context: ../catalog
+      dockerfile: Dockerfile
+    ports:
+      - "4002:4002"
+    environment:
+      - PORT=4002
+      - DB_FILE=/data/catalog.json
+      - PEER_URL=http://catalog1:4001
+      - FRONTEND_URL=http://fronted:3000
+    volumes:
+      - catalog2_data:/data
+
+  # Order replicas
+  order1:
     build:
       context: ../order
       dockerfile: Dockerfile
     ports:
-      - "5000:5000"
-    volumes:
-      - ../order:/app    
+      - "5001:5001"
     environment:
-      - CATALOG_URL=http://catalog:4000
+      - PORT=5001
+      - DB_FILE=/data/orders.json
+      - PEER_URL=http://order2:5002
+      - CATALOG_REPLICAS=http://catalog1:4001,http://catalog2:4002
+      - CATALOG_URL=http://catalog1:4001
+      - FRONTEND_URL=http://fronted:3000
+    volumes:
+      - order1_data:/data
     depends_on:
-      - catalog
+      - catalog1
+      - catalog2
 
-  fronted:
+  order2:
     build:
-      context: ../fronted  
+      context: ../order
       dockerfile: Dockerfile
     ports:
-      - "3000:3000"
-    volumes:
-      - ../fronted:/app    
+      - "5002:5002"
     environment:
-      - CATALOG_URL=http://catalog:4000
-      - ORDER_URL=http://order:5000
+      - PORT=5002
+      - DB_FILE=/data/orders.json
+      - PEER_URL=http://order1:5001
+      - CATALOG_REPLICAS=http://catalog1:4001,http://catalog2:4002
+      - CATALOG_URL=http://catalog2:4002
+      - FRONTEND_URL=http://fronted:3000
+    volumes:
+      - order2_data:/data
     depends_on:
-      - catalog
-      - order
+      - catalog1
+      - catalog2
+
+volumes:
+  catalog1_data:
+  catalog2_data:
+  order1_data:
+  order2_data:

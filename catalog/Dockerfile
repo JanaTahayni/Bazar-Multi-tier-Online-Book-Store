@@ -8,4 +8,5 @@ RUN npm install
 COPY . .
 
 EXPOSE 4000
-CMD ["node", "server.js"]
+CMD ["sh", "-c", "node initData.js && node server.js"]
+

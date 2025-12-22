@@ -3,28 +3,50 @@
     "id": 1,
     "title": "How to get a good grade in DOS in 40 minutes a day",
     "topic": "distributed systems",
-    "price": 40,
+    "price": 50,
     "quantity": 5
   },
   {
     "id": 2,
     "title": "RPCs for Noobs",
     "topic": "distributed systems",
-    "price": 50,
+    "price": 45,
     "quantity": 5
   },
   {
     "id": 3,
     "title": "Xen and the Art of Surviving Undergraduate School",
     "topic": "undergraduate school",
-    "price": 35,
+    "price": 40,
     "quantity": 5
   },
   {
     "id": 4,
     "title": "Cooking for the Impatient Undergrad",
     "topic": "undergraduate school",
-    "price": 25,
+    "price": 35,
+    "quantity": 5
+  },
+
+  {
+    "id": 5,
+    "title": "How to finish Project 3 on time",
+    "topic": "undergraduate school",
+    "price": 30,
+    "quantity": 5
+  },
+  {
+    "id": 6,
+    "title": "Why theory classes are so hard.",
+    "topic": "undergraduate school",
+    "price": 30,
+    "quantity": 5
+  },
+  {
+    "id": 7,
+    "title": "Spring in the Pioneer Valley",
+    "topic": "undergraduate school",
+    "price": 30,
     "quantity": 5
   }
 ]
